@@ -1,21 +1,25 @@
 # Multimodal Adversarial Prompt Tuning
 
 This repository implements Multimodal Adversarial Prompt Tuning, a technique for improving the adversarial robustness of pre-trained vision-language models.
+<p align="center">
+<img src="./docs/MultimodalAPT.pdf" width=100% height=100% 
+class="center">
+</p>
 
-## Environment Setup
+# Environment Setup
 
 To set up the required environment, please follow the installation instructions provided in the [CoOp repository](https://github.com/KaiyangZhou/CoOp#how-to-install).
 
-## Data Preparation
+# Data Preparation
 
 Before training or evaluating the models, you'll need to prepare the necessary datasets. Detailed instructions on downloading, preprocessing, and organizing the data can be found in [DATASETS.md](docs/DATASETS.md).
 
-## Training and Evaluation
+# Training and Evaluation
 
 This project provides scripts for training and evaluating various prompt designs. You can find all scripts in the `./scripts` directory.
 
 
-### Example Usage
+## Example Usage
 
 Here are examples of how to train and evaluate different Multimodal Adversarial Prompt Tuning using a ViT-B/16 backbone in a zero-shot setting:
 
