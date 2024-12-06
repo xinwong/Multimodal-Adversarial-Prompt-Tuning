@@ -1,6 +1,6 @@
 # Multimodal Adversarial Prompt Tuning
 
-This repository implements Multimodal Adversarial Prompt Tuning, a technique for improving the adversarial robustness of pre-trained vision-language models.
+This repository implements Multimodal Adversarial Prompt Tuning, a technique for improving the adversarial robustness of pre-trained Vision-Language models.
 
 <p align="center">
 <img src="./docs/MultimodalAPT.png" width=100% height=100% 
@@ -40,6 +40,12 @@ Here are examples of how to train and evaluate different Multimodal Adversarial 
 
     ```bash
     ./scripts/AdvVPT/zs_vit16_train_AdvVPT.sh
+    ```
+
+*   **AdvCoOp (Adversarial Textual Prompt):**
+
+    ```bash
+    ./scripts/AdvCoOp/zs_vit16_train_AdvCoOp.sh
     ```
 
 # Acknowledgement
