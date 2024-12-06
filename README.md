@@ -36,7 +36,7 @@ Here are examples of how to train and evaluate different Multimodal Adversarial 
     ./scripts/AdvMaple/zs_vit16_train_AdvMaple.sh
     ```
 
-*   **AdvVPT (Adversarial Visual Prompt):**
+*   **AdvVP (Adversarial Visual Prompt):**
 
     ```bash
     ./scripts/AdvVPT/zs_vit16_train_AdvVPT.sh
