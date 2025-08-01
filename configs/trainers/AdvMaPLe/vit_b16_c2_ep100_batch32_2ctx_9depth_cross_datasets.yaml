@@ -30,7 +30,7 @@ MODEL:
     NAME: "ViT-B/16"
 
 TRAINER:
-  ADVMAPLE:
+  AdvMaPLe:
     N_CTX: 2
     CTX_INIT: "a photo of a"
     PREC: "fp16"

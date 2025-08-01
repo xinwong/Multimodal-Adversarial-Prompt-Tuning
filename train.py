@@ -26,8 +26,11 @@ import datasets.imagenet_r
 import trainers.advzsclip
 import trainers.advcoop
 import trainers.advvpt
+import trainers.advvpt_moe
 import trainers.advmaple
+import trainers.advmaple_moe
 import trainers.adv_independentVL
+import trainers.adv_independentVL_moe
 
 def print_args(args, cfg):
     print("***************")
@@ -108,7 +111,7 @@ def extend_cfg(cfg):
     cfg.TRAINER.AdvCoOp.PREC = "fp16"  # fp16, fp32, amp
     cfg.TRAINER.AdvCoOp.CLASS_TOKEN_POSITION = "end"  # 'middle' or 'end' or 'front'
 
-    # Config for Adversarial Visual-Only Prompt
+    # Config for Adversarial Visual-Only Prompt (AdvVPT)
     cfg.TRAINER.AdvVPT = CN()
     cfg.TRAINER.AdvVPT.N_CTX_VISION = 2  # number of context vectors at the vision branch
     cfg.TRAINER.AdvVPT.CTX_INIT = "a photo of a"  # initialization words
@@ -116,15 +119,33 @@ def extend_cfg(cfg):
     cfg.TRAINER.AdvVPT.PROMPT_DEPTH_VISION = 9  # if set to 1, will represent shallow vision prompting only
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
 
-    # Config for Adversarial V-L Joint Prompt (AdvMaPLe)
-    cfg.TRAINER.ADVMAPLE = CN()
-    cfg.TRAINER.ADVMAPLE.N_CTX = 2  # number of context vectors
-    cfg.TRAINER.ADVMAPLE.CTX_INIT = "a photo of a"  # initialization words
-    cfg.TRAINER.ADVMAPLE.PREC = "fp16"  # fp16, fp32, amp
-    cfg.TRAINER.ADVMAPLE.PROMPT_DEPTH = 9 # Max 12, minimum 0, for 1 it will act as shallow MaPLe (J=1)
+    # Config for MoE Adversarial Visual-Only Prompt (MoEAdvVPT)
+    cfg.TRAINER.MoEAdvVPT = CN()
+    cfg.TRAINER.MoEAdvVPT.N_CTX_VISION = 2  # number of context vectors at the vision branch
+    cfg.TRAINER.MoEAdvVPT.CTX_INIT = "a photo of a"  # initialization words
+    cfg.TRAINER.MoEAdvVPT.PREC = "fp16"  # fp16, fp32, amp
+    cfg.TRAINER.MoEAdvVPT.PROMPT_DEPTH_VISION = 9  # if set to 1, will represent shallow vision prompting only
+    cfg.TRAINER.MoEAdvVPT.NUM_EXPERTS = 3  # number of experts
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
 
-    # Config for Adversarial V-L Independent Prompt
+    # Config for Adversarial V-L Joint Prompt (AdvMaPLe)
+    cfg.TRAINER.AdvMaPLe = CN()
+    cfg.TRAINER.AdvMaPLe.N_CTX = 2  # number of context vectors
+    cfg.TRAINER.AdvMaPLe.CTX_INIT = "a photo of a"  # initialization words
+    cfg.TRAINER.AdvMaPLe.PREC = "fp16"  # fp16, fp32, amp
+    cfg.TRAINER.AdvMaPLe.PROMPT_DEPTH = 9 # Max 12, minimum 0, for 1 it will act as shallow MaPLe (J=1)
+    cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
+
+    # Config for MoE Adversarial V-L Joint Prompt (MoEAdvMaPLe)
+    cfg.TRAINER.MoEAdvMaPLe = CN()
+    cfg.TRAINER.MoEAdvMaPLe.N_CTX = 2  # number of context vectors
+    cfg.TRAINER.MoEAdvMaPLe.CTX_INIT = "a photo of a"  # initialization words
+    cfg.TRAINER.MoEAdvMaPLe.PREC = "fp16"  # fp16, fp32, amp
+    cfg.TRAINER.MoEAdvMaPLe.PROMPT_DEPTH = 9 # Max 12, minimum 0, for 1 it will act as shallow MaPLe (J=1)
+    cfg.TRAINER.MoEAdvMaPLe.NUM_EXPERTS = 3  # number of experts
+    cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
+
+    # Config for Adversarial V-L Independent Prompt (AdvIVLP)
     cfg.TRAINER.AdvIVLP = CN()
     cfg.TRAINER.AdvIVLP.N_CTX_VISION = 2  # number of context vectors at the vision branch
     cfg.TRAINER.AdvIVLP.N_CTX_TEXT = 2  # number of context vectors at the language branch
@@ -133,6 +154,18 @@ def extend_cfg(cfg):
     # If both variables below are set to 0, 0, will the config will degenerate to COOP model
     cfg.TRAINER.AdvIVLP.PROMPT_DEPTH_VISION = 9 # Max 12, minimum 0, for 0 it will act as shallow MaPLe (J=1)
     cfg.TRAINER.AdvIVLP.PROMPT_DEPTH_TEXT = 9  # Max 12, minimum 0, for 0 it will act as shallow MaPLe (J=1)
+    cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
+
+    # Config for MoE Adversarial V-L Independent Prompt (MoEAdvIVLP)
+    cfg.TRAINER.MoEAdvIVLP = CN()
+    cfg.TRAINER.MoEAdvIVLP.N_CTX_VISION = 2  # number of context vectors at the vision branch
+    cfg.TRAINER.MoEAdvIVLP.N_CTX_TEXT = 2  # number of context vectors at the language branch
+    cfg.TRAINER.MoEAdvIVLP.CTX_INIT = "a photo of a"  # initialization words (only for language prompts)
+    cfg.TRAINER.MoEAdvIVLP.PREC = "fp16"  # fp16, fp32, amp
+    # If both variables below are set to 0, 0, will the config will degenerate to COOP model
+    cfg.TRAINER.MoEAdvIVLP.PROMPT_DEPTH_VISION = 9 # Max 12, minimum 0, for 0 it will act as shallow MaPLe (J=1)
+    cfg.TRAINER.MoEAdvIVLP.PROMPT_DEPTH_TEXT = 9  # Max 12, minimum 0, for 0 it will act as shallow MaPLe (J=1)
+    cfg.TRAINER.MoEAdvIVLP.NUM_EXPERTS = 3  # number of experts
     cfg.DATASET.SUBSAMPLE_CLASSES = "all"  # all, base or new
 
 def setup_cfg(args):

@@ -2,7 +2,7 @@ DATALOADER:
   TRAIN_X:
     BATCH_SIZE: 32
   TEST:
-    BATCH_SIZE: 512
+    BATCH_SIZE: 256
   NUM_WORKERS: 8
 
 INPUT:
@@ -30,11 +30,12 @@ MODEL:
     NAME: "ViT-B/32"
 
 TRAINER:
-  AdvMaPLe:
+  MoEAdvMaPLe:
     N_CTX: 2
     CTX_INIT: "a photo of a"
     PREC: "fp16"
     PROMPT_DEPTH: 9
+    NUM_EXPERTS: 3
 
 AT:
   TRAIN:
