@@ -44,7 +44,7 @@ def load_clip_to_cpu(cfg):
                       "vision_depth": 0,
                       "language_depth": 0, "vision_ctx": 0,
                       "language_ctx": 0,
-                      "maple_length": cfg.TRAINER.ADVMAPLE.N_CTX}
+                      "maple_length": cfg.TRAINER.AdvMaPLe.N_CTX}
     model = clip.build_model(state_dict or model.state_dict(), design_details)
 
     return model
@@ -80,15 +80,15 @@ class MultiModalPromptLearner(nn.Module):
     def __init__(self, cfg, classnames, clip_model):
         super().__init__()
         n_cls = len(classnames)
-        n_ctx = cfg.TRAINER.ADVMAPLE.N_CTX
-        ctx_init = cfg.TRAINER.ADVMAPLE.CTX_INIT
+        n_ctx = cfg.TRAINER.AdvMaPLe.N_CTX
+        ctx_init = cfg.TRAINER.AdvMaPLe.CTX_INIT
         dtype = clip_model.dtype
         ctx_dim = clip_model.ln_final.weight.shape[0]
         clip_imsize = clip_model.visual.input_resolution
         cfg_imsize = cfg.INPUT.SIZE[0]
         # Default is 1, which is compound shallow prompting
-        assert cfg.TRAINER.ADVMAPLE.PROMPT_DEPTH >= 1, "For AdvMaPLe, PROMPT_DEPTH should be >= 1"
-        self.compound_prompts_depth = cfg.TRAINER.ADVMAPLE.PROMPT_DEPTH  # max=12, but will create 11 such shared prompts
+        assert cfg.TRAINER.AdvMaPLe.PROMPT_DEPTH >= 1, "For AdvMaPLe, PROMPT_DEPTH should be >= 1"
+        self.compound_prompts_depth = cfg.TRAINER.AdvMaPLe.PROMPT_DEPTH  # max=12, but will create 11 such shared prompts
         assert cfg_imsize == clip_imsize, f"cfg_imsize ({cfg_imsize}) must equal to clip_imsize ({clip_imsize})"
 
         if ctx_init and (n_ctx) <= 4:
@@ -313,7 +313,7 @@ class AdvMaPLe(TrainerX):
         return list(results.values())[0]
 
     def check_cfg(self, cfg):
-        assert cfg.TRAINER.ADVMAPLE.PREC in ["fp16", "fp32", "amp"]
+        assert cfg.TRAINER.AdvMaPLe.PREC in ["fp16", "fp32", "amp"]
 
     def build_model(self):
         cfg = self.cfg
@@ -322,7 +322,7 @@ class AdvMaPLe(TrainerX):
         print(f"Loading CLIP (backbone: {cfg.MODEL.BACKBONE.NAME})")
         clip_model = load_clip_to_cpu(cfg)
 
-        if cfg.TRAINER.ADVMAPLE.PREC == "fp32" or cfg.TRAINER.ADVMAPLE.PREC == "amp":
+        if cfg.TRAINER.AdvMaPLe.PREC == "fp32" or cfg.TRAINER.AdvMaPLe.PREC == "amp":
             # CLIP's default precision is fp16
             clip_model.float()
 
@@ -341,7 +341,7 @@ class AdvMaPLe(TrainerX):
                     param.requires_grad_(False)
 
         # Double check prec
-        if cfg.TRAINER.ADVMAPLE.PREC == "fp32" or cfg.TRAINER.ADVMAPLE.PREC == "amp":
+        if cfg.TRAINER.AdvMaPLe.PREC == "fp32" or cfg.TRAINER.AdvMaPLe.PREC == "amp":
             # CLIP's default precision is fp16
             for name, param in self.model.named_parameters():
                 param.data = param.data.to(torch.float32)
@@ -364,7 +364,7 @@ class AdvMaPLe(TrainerX):
         self.sched = build_lr_scheduler(self.optim, cfg.OPTIM)
         self.register_model("MultiModalPromptLearner", self.model, self.optim, self.sched)
 
-        self.scaler = GradScaler() if cfg.TRAINER.ADVMAPLE.PREC == "amp" else None
+        self.scaler = GradScaler() if cfg.TRAINER.AdvMaPLe.PREC == "amp" else None
 
         # Note that multi-gpu training could be slow because CLIP's size is
         # big, which slows down the copy operation in DataParallel
@@ -404,7 +404,7 @@ class AdvMaPLe(TrainerX):
         else:
             raise ValueError(f"Invalid loss type: {loss_type}")
 
-        prec = self.cfg.TRAINER.ADVMAPLE.PREC
+        prec = self.cfg.TRAINER.AdvMaPLe.PREC
         if prec == "amp":
             with autocast():
                 if loss_type == "trades":
